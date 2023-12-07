@@ -1,0 +1,80 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Laundry {
+  id            Int       @id @default(autoincrement())
+  namaLengkap   String?   @map("nama_lengkap")
+  email         String    @unique
+  password      String
+  nomorTelepon  String?   @map("nomor_telepon")
+  namaLaundry   String?   @map("nama_laundry")
+  fotoLaundry   String?   @map("foto_laundry")
+  alamat        String?
+  latitude      String?
+  longitude     String?
+  passwordToken String?   @map("password_token")
+  status        String?
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+  layanan       Layanan[]
+  order         Order[]
+
+  @@map("laundry")
+}
+
+model Layanan {
+  id           Int      @id @default(autoincrement())
+  namaLayanan  String?  @map("nama_layanan")
+  hargaLayanan Float?   @map("harga_layanan")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+  Laundry      Laundry? @relation(fields: [laundryId], references: [id])
+  laundryId    Int?
+  order        Order[]
+
+  @@map("layanan")
+}
+
+model Customer {
+  id            Int      @id @default(autoincrement())
+  namaLengkap   String   @map("nama_lengkap")
+  email         String   @unique
+  password      String
+  nomorTelepon  String?  @map("nomor_telepon")
+  fotoProfil    String?  @map("foto_profil")
+  alamat        String?  @map("alamat")
+  latitude      String?
+  longitude     String?
+  passwordToken String?  @map("password_token")
+  status        String?
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  @@map("customer")
+}
+
+model Order {
+  id            Int      @id @default(autoincrement())
+  orderTrx      String   @map("order_trx")
+  estimasiBerat Float    @map("estimasi_berat")
+  hargaTotal    BigInt   @map("harga_total")
+  catatan       String?
+  status        String?
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+  Laundry       Laundry? @relation(fields: [laundryId], references: [id])
+  laundryId     Int?
+  Layanan       Layanan? @relation(fields: [layananId], references: [id])
+  layananId     Int?
+
+  @@map("order")
+}
