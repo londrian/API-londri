@@ -13,6 +13,44 @@ const showProfile = async (req, res) => {
       where: {
         id: jwtAdminId,
       },
+      select: {
+        layanan: true,
+      },
+    });
+
+    delete data["password"];
+
+    return res.status(200).json({
+      error: false,
+      message: "Load profile berhasil",
+      response: data,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      error: true,
+      message: error || "Internal server error",
+    });
+  }
+};
+
+const showFullProfile = async (req, res) => {
+  try {
+    const jwtAdminId = res.sessionLogin.id; // From checktoken middlewares
+    const data = await laundry.findUnique({
+      where: {
+        id: jwtAdminId,
+      },
+      include: {
+        layanan: {
+          select: {
+            id: true,
+            namaLayanan: true,
+            hargaLayanan: true,
+            status: true,
+          },
+        },
+      },
     });
 
     delete data["password"];
@@ -33,4 +71,5 @@ const showProfile = async (req, res) => {
 
 module.exports = {
   showProfile,
+  showFullProfile,
 };
