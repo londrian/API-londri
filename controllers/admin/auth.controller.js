@@ -12,11 +12,12 @@ const register = async (req, res) => {
     email,
     password,
     nama_laundry,
-    foto_laundry,
     alamat,
     latitude,
     longitude,
   } = req.body;
+
+  const allowedImageTypes = ["image/jpeg", "image/png", "image/gif"];
   try {
     const cekEmail = await laundry.findUnique({
       where: {
@@ -31,26 +32,46 @@ const register = async (req, res) => {
       });
     }
 
-    //  Image handle
-    const fileTostring = req.file.buffer.toString("base64");
+    let insertData = {
+      nomorTelepon: nomor_telepon,
+      email: email,
+      password: await utils.encryptPassword(password),
+      namaLaundry: nama_laundry,
+      alamat: alamat,
+      latitude: latitude,
+      longitude: longitude,
+      status: "Close",
+    };
 
-    const uploadFile = await utils.imageKit.upload({
-      fileName: req.file.originalname,
-      file: fileTostring,
-    });
+    if (req.file) {
+      try {
+        // Check filetype upload
+        if (!allowedImageTypes.includes(req.file.mimetype)) {
+          return res.status(400).json({
+            error: true,
+            message: "Tipe foto yang diupload tidak sesuai.",
+          });
+        }
+
+        //  Image handle
+        const fileTostring = req.file.buffer.toString("base64");
+
+        const uploadFile = await utils.imageKit.upload({
+          fileName: req.file.originalname,
+          file: fileTostring,
+        });
+
+        insertData.fotoLaundry = uploadFile.url;
+      } catch (error) {
+        return res.status(500).json({
+          error: true,
+          message: "Error upload gambar ke server",
+        });
+      }
+    }
 
     const data = await laundry.create({
-      data: {
-        nomorTelepon: nomor_telepon,
-        email: email,
-        password: await utils.encryptPassword(password),
-        namaLaundry: nama_laundry,
-        fotoLaundry: uploadFile.url,
-        alamat: alamat,
-        latitude: latitude,
-        longitude: longitude,
-        status: "Close",
-      },
+      data: insertData,
     });
 
     delete data["password"];
