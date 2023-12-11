@@ -59,23 +59,26 @@ model Customer {
   status        String?
   createdAt     DateTime @default(now()) @map("created_at")
   updatedAt     DateTime @updatedAt @map("updated_at")
+  order         Order[]
 
   @@map("customer")
 }
 
 model Order {
-  id            Int      @id @default(autoincrement())
-  orderTrx      String   @map("order_trx")
-  estimasiBerat Float    @map("estimasi_berat")
-  hargaTotal    BigInt   @map("harga_total")
+  id            Int       @id @default(autoincrement())
+  orderTrx      String    @map("order_trx")
+  estimasiBerat Float     @map("estimasi_berat")
+  hargaTotal    BigInt    @map("harga_total")
   catatan       String?
   status        String?
-  createdAt     DateTime @default(now()) @map("created_at")
-  updatedAt     DateTime @updatedAt @map("updated_at")
-  Laundry       Laundry? @relation(fields: [laundryId], references: [id])
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+  Laundry       Laundry?  @relation(fields: [laundryId], references: [id])
   laundryId     Int?
-  Layanan       Layanan? @relation(fields: [layananId], references: [id])
+  Layanan       Layanan?  @relation(fields: [layananId], references: [id])
   layananId     Int?
+  Customer      Customer? @relation(fields: [customerId], references: [id])
+  customerId    Int?
 
   @@map("order")
 }
