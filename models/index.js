@@ -3,7 +3,7 @@ const prisma = new PrismaClient();
 
 module.exports = {
   laundry: prisma.laundry,
-  user: prisma.user,
+  customer: prisma.customer,
   layanan: prisma.layanan,
   order: prisma.order,
 };
