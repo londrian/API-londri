@@ -1,6 +1,6 @@
 require("dotenv").config();
 
-const { order, layanan, laundry } = require("../../models");
+const { customer, order, layanan, laundry } = require("../../models");
 const utils = require("../../utils");
 
 const createOrder = async (req, res) => {
@@ -8,6 +8,33 @@ const createOrder = async (req, res) => {
     const jwtUserId = res.sessionLogin.id; // From checktoken middlewares
     const getLaundryId = parseInt(req.params.laundryId);
     const { estimasi_berat, layanan_id, catatan } = req.body;
+
+    const cekUser = await customer.findUnique({
+      where: {
+        id: jwtUserId,
+      },
+      select: {
+        alamat: true,
+        latitude: true,
+        longitude: true,
+      },
+    });
+
+    const cekLaundry = await laundry.findUnique({
+      where: {
+        id: parseInt(getLaundryId),
+      },
+      select: {
+        namaLaundry: true,
+      },
+    });
+
+    if (!cekLaundry) {
+      return res.status(404).json({
+        error: true,
+        message: `Laundry dengan id #${getLaundryId} tidak ditemukan`,
+      });
+    }
 
     const cekLayanan = await layanan.findUnique({
       where: {
@@ -19,6 +46,13 @@ const createOrder = async (req, res) => {
         namaLayanan: true,
       },
     });
+
+    if (!cekLayanan) {
+      return res.status(404).json({
+        error: true,
+        message: `Laundry #${getLaundryId} tidak memiliki layanan #${layanan_id}`,
+      });
+    }
 
     const harga = cekLayanan.hargaLayanan;
     const hargaTotal = parseFloat(harga) * parseFloat(estimasi_berat);
@@ -38,15 +72,6 @@ const createOrder = async (req, res) => {
       },
     });
 
-    const cekLaundry = await laundry.findFirst({
-      where: {
-        id: parseInt(data.laundryId),
-      },
-      select: {
-        namaLaundry: true,
-      },
-    });
-
     const responseData = {
       ...data,
       laundryId: undefined,
@@ -54,6 +79,9 @@ const createOrder = async (req, res) => {
       hargaTotal: data.hargaTotal ? parseFloat(data.hargaTotal) : null,
       namaLaundry: cekLaundry.namaLaundry,
       namaLayanan: cekLayanan.namaLayanan,
+      alamatCustomer: cekUser.alamat,
+      latitude: cekUser.latitude,
+      longitude: cekUser.longitude,
     };
 
     return res.status(201).json({
@@ -73,6 +101,17 @@ const createOrder = async (req, res) => {
 const allOrder = async (req, res) => {
   try {
     const jwtUserId = res.sessionLogin.id; // From checktoken middlewares
+
+    const cekUser = await customer.findUnique({
+      where: {
+        id: jwtUserId,
+      },
+      select: {
+        alamat: true,
+        latitude: true,
+        longitude: true,
+      },
+    });
 
     const data = await order.findMany({
       where: {
@@ -103,7 +142,10 @@ const allOrder = async (req, res) => {
       Laundry: undefined,
       hargaTotal: item.hargaTotal ? parseFloat(item.hargaTotal) : null,
       namaLayanan: item.Layanan.namaLayanan,
-      namaLaundri: item.Laundry.namaLaundry,
+      namaLaundry: item.Laundry.namaLaundry,
+      alamatCustomer: cekUser.alamat,
+      latitude: cekUser.latitude,
+      longitude: cekUser.longitude,
     }));
 
     return res.status(200).json({

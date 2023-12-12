@@ -30,6 +30,9 @@ const allOrder = async (req, res) => {
           select: {
             id: true,
             namaLengkap: true,
+            alamat: true,
+            latitude: true,
+            longitude: true,
           },
         },
       },
@@ -42,6 +45,9 @@ const allOrder = async (req, res) => {
       id: item.id,
       orderTrx: item.orderTrx,
       namaCustomer: item.Customer.namaLengkap,
+      alamatCustomer: item.Customer.alamat,
+      latitude: item.Customer.latitude,
+      longitude: item.Customer.longitude,
       layanan: item.Layanan.namaLayanan,
       hargaLayanan: item.Layanan.hargaLayanan,
       estimasiBerat: item.estimasiBerat,
@@ -101,6 +107,9 @@ const terimaOrder = async (req, res) => {
       },
       select: {
         namaLengkap: true,
+        alamat: true,
+        latitude: true,
+        longitude: true,
       },
     });
 
@@ -128,6 +137,9 @@ const terimaOrder = async (req, res) => {
       laundryId: undefined,
       hargaTotal: data.hargaTotal ? parseFloat(data.hargaTotal) : null,
       namaCustomer: cekUser.namaLengkap,
+      alamatCustomer: cekUser.alamat,
+      latitude: cekUser.latitude,
+      longitude: cekUser.longitude,
       namaLayanan: cekLayanan.namaLayanan,
       namaLaundry: cekLaundry.namaLaundry,
     };
