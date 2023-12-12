@@ -13,7 +13,7 @@ const showProfile = async (req, res) => {
       where: {
         id: jwtAdminId,
       },
-      select: {
+      include: {
         layanan: true,
       },
     });
