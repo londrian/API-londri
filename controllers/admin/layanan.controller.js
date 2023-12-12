@@ -142,7 +142,7 @@ const editLayanan = async (req, res) => {
   try {
     const jwtAdminId = res.sessionLogin.id; // From checktoken middlewares
     const getLayananId = parseInt(req.params.layananId); // From parameter
-    const { nama_layanan, harga_layanan, status } = req.body;
+    const { nama_layanan, harga_layanan } = req.body;
     const cekAdmin = await laundry.findUnique({
       where: {
         id: jwtAdminId,
@@ -177,7 +177,12 @@ const editLayanan = async (req, res) => {
       data: {
         namaLayanan: nama_layanan,
         hargaLayanan: parseFloat(harga_layanan),
-        status: status,
+      },
+      select: {
+        id: true,
+        namaLayanan: true,
+        hargaLayanan: true,
+        status: true,
       },
     });
 
@@ -227,9 +232,10 @@ const deleteLayanan = async (req, res) => {
       });
     }
 
-    const data = await layanan.delete({
+    await layanan.delete({
       where: {
         id: getLayananId,
+        laundryId: jwtAdminId,
       },
     });
 

@@ -4,6 +4,7 @@ const router = express.Router();
 const authAdminRouter = require("./admin/auth.route");
 const profileAdminRouter = require("./admin/profile.route");
 const layananAdminRouter = require("./admin/layanan.route");
+const statusAdminRouter = require("./admin/status.route");
 const orderAdminRouter = require("./admin/order.route.js");
 
 const authUserRouter = require("./user/auth.route");
@@ -25,6 +26,7 @@ router.get("/", (req, res) => {
 router.use("/auth/admin", authAdminRouter);
 router.use("/admin/profile", profileAdminRouter);
 router.use("/admin/layanan", layananAdminRouter);
+router.use("/admin/status", statusAdminRouter);
 router.use("/admin/laundry/order", orderAdminRouter);
 
 // User
