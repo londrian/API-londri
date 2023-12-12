@@ -72,7 +72,7 @@ const register = async (req, res) => {
     return res.status(201).json({
       error: false,
       message: "Registrasi berhasil dilakukan",
-      response: data,
+      // response: data,
     });
   } catch (error) {
     console.log(error);
