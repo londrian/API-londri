@@ -158,7 +158,85 @@ const terimaOrder = async (req, res) => {
   }
 };
 
+const detailOrder = async (req, res) => {
+  try {
+    const jwtAdminId = res.sessionLogin.id; // From checktoken middlewares
+    const orderTrx = req.params.orderTrx;
+
+    const data = await order.findFirst({
+      where: {
+        orderTrx: orderTrx,
+        laundryId: jwtAdminId,
+      },
+      select: {
+        id: true,
+        orderTrx: true,
+        hargaTotal: true,
+        estimasiBerat: true,
+        catatan: true,
+        status: true,
+        createdAt: true,
+        Layanan: {
+          select: {
+            id: true,
+            namaLayanan: true,
+            hargaLayanan: true,
+          },
+        },
+        Customer: {
+          select: {
+            id: true,
+            namaLengkap: true,
+            alamat: true,
+            latitude: true,
+            longitude: true,
+          },
+        },
+      },
+    });
+
+    if (!data) {
+      return res.status(404).json({
+        error: true,
+        message: `Data order #${orderTrx} tidak ditemukan`,
+      });
+    }
+
+    const resultData = {
+      Layanan: undefined,
+      Customer: undefined,
+      createdAt: undefined,
+      id: data.id,
+      orderTrx: data.orderTrx,
+      namaCustomer: data.Customer.namaLengkap,
+      alamatCustomer: data.Customer.alamat,
+      latitude: data.Customer.latitude,
+      longitude: data.Customer.longitude,
+      layanan: data.Layanan.namaLayanan,
+      hargaLayanan: data.Layanan.hargaLayanan,
+      estimasiBerat: data.estimasiBerat,
+      hargaTotal: data.hargaTotal ? parseFloat(data.hargaTotal) : null,
+      catatan: data.catatan,
+      status: data.status,
+      tanggalOrder: data.createdAt,
+    };
+
+    return res.status(200).json({
+      error: false,
+      message: `Data order #${orderTrx} berhasil ditampilkan`,
+      resultOrder: resultData,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      error: false,
+      message: error || "Internal server error",
+    });
+  }
+};
+
 module.exports = {
   allOrder,
   terimaOrder,
+  detailOrder,
 };

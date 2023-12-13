@@ -5,5 +5,6 @@ const checkToken = require("../../middlewares/checkToken");
 
 router.get("/", checkToken, controller.allOrder);
 router.post("/:orderTrx", checkToken, controller.terimaOrder);
+router.get("/detail/:orderTrx", checkToken, controller.detailOrder);
 
 module.exports = router;
