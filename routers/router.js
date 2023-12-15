@@ -37,5 +37,6 @@ router.use("/user/profile", profileUserRouter);
 router.use("/laundry", homeLaundry);
 router.use("/laundry/order", orderLaundry);
 router.use("/laundry/riwayat", orderLaundry);
+router.use("/laundry/status", orderLaundry);
 
 module.exports = router;

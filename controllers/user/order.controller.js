@@ -162,7 +162,207 @@ const allOrder = async (req, res) => {
   }
 };
 
+const allOrderProcess = async (req, res) => {
+  try {
+    const jwtUserId = res.sessionLogin.id; // From checktoken middlewares
+
+    const cekUser = await customer.findUnique({
+      where: {
+        id: jwtUserId,
+      },
+      select: {
+        alamat: true,
+        latitude: true,
+        longitude: true,
+      },
+    });
+
+    const data = await order.findMany({
+      where: {
+        customerId: jwtUserId,
+        status: {
+          not: "Selesai",
+        },
+      },
+      orderBy: {
+        id: "asc",
+      },
+      include: {
+        Laundry: {
+          select: {
+            namaLaundry: true,
+          },
+        },
+        Layanan: {
+          select: {
+            namaLayanan: true,
+          },
+        },
+      },
+    });
+
+    const resultData = data.map((item) => ({
+      ...item,
+      laundryId: undefined,
+      layananId: undefined,
+      Layanan: undefined,
+      Laundry: undefined,
+      hargaTotal: item.hargaTotal ? parseFloat(item.hargaTotal) : null,
+      namaLayanan: item.Layanan.namaLayanan,
+      namaLaundry: item.Laundry.namaLaundry,
+      alamatCustomer: cekUser.alamat,
+      latitude: cekUser.latitude,
+      longitude: cekUser.longitude,
+    }));
+
+    return res.status(200).json({
+      error: false,
+      message: "Riwayat order berhasil ditampilkan",
+      resultRiwayat: resultData,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      error: true,
+      message: error || "Internal server error",
+    });
+  }
+};
+
+const allOrderSelesai = async (req, res) => {
+  try {
+    const jwtUserId = res.sessionLogin.id; // From checktoken middlewares
+
+    const cekUser = await customer.findUnique({
+      where: {
+        id: jwtUserId,
+      },
+      select: {
+        alamat: true,
+        latitude: true,
+        longitude: true,
+      },
+    });
+
+    const data = await order.findMany({
+      where: {
+        customerId: jwtUserId,
+        status: "Selesai",
+      },
+      orderBy: {
+        id: "asc",
+      },
+      include: {
+        Laundry: {
+          select: {
+            namaLaundry: true,
+          },
+        },
+        Layanan: {
+          select: {
+            namaLayanan: true,
+          },
+        },
+      },
+    });
+
+    const resultData = data.map((item) => ({
+      ...item,
+      laundryId: undefined,
+      layananId: undefined,
+      Layanan: undefined,
+      Laundry: undefined,
+      hargaTotal: item.hargaTotal ? parseFloat(item.hargaTotal) : null,
+      namaLayanan: item.Layanan.namaLayanan,
+      namaLaundry: item.Laundry.namaLaundry,
+      alamatCustomer: cekUser.alamat,
+      latitude: cekUser.latitude,
+      longitude: cekUser.longitude,
+    }));
+
+    return res.status(200).json({
+      error: false,
+      message: "Riwayat order berhasil ditampilkan",
+      resultRiwayat: resultData,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      error: true,
+      message: error || "Internal server error",
+    });
+  }
+};
+
+const detailOrder = async (req, res) => {
+  try {
+    const jwtUserId = res.sessionLogin.id; // From checktoken middlewares
+    const orderTrx = req.params.orderTrx;
+
+    const cekUser = await customer.findUnique({
+      where: {
+        id: jwtUserId,
+      },
+      select: {
+        alamat: true,
+        latitude: true,
+        longitude: true,
+      },
+    });
+
+    const data = await order.findFirst({
+      where: {
+        orderTrx: orderTrx,
+      },
+      orderBy: {
+        id: "asc",
+      },
+      include: {
+        Laundry: {
+          select: {
+            namaLaundry: true,
+          },
+        },
+        Layanan: {
+          select: {
+            namaLayanan: true,
+          },
+        },
+      },
+    });
+
+    const resultData = data.map((item) => ({
+      ...item,
+      laundryId: undefined,
+      layananId: undefined,
+      Layanan: undefined,
+      Laundry: undefined,
+      hargaTotal: item.hargaTotal ? parseFloat(item.hargaTotal) : null,
+      namaLayanan: item.Layanan.namaLayanan,
+      namaLaundry: item.Laundry.namaLaundry,
+      alamatCustomer: cekUser.alamat,
+      latitude: cekUser.latitude,
+      longitude: cekUser.longitude,
+    }));
+
+    return res.status(200).json({
+      error: false,
+      message: "Riwayat order berhasil ditampilkan",
+      resultRiwayat: resultData,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      error: true,
+      message: error || "Internal server error",
+    });
+  }
+};
+
 module.exports = {
   createOrder,
   allOrder,
+  allOrderProcess,
+  allOrderSelesai,
+  detailOrder,
 };
