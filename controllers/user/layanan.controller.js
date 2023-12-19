@@ -4,7 +4,10 @@ const layananByLaundryId = async (req, res) => {
   try {
     const getLaundryId = parseInt(req.params.laundryId);
     const data = await layanan.findMany({
-      where: { laundryId: getLaundryId },
+      where: {
+        laundryId: getLaundryId,
+        status: "Tersedia",
+      },
       select: {
         id: true,
         namaLayanan: true,
