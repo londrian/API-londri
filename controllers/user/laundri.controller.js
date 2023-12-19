@@ -12,6 +12,8 @@ const allLaundry = async (req, res) => {
         fotoLaundry: true,
         nomorTelepon: true,
         alamat: true,
+        latitude: true,
+        longitude: true,
         status: true,
         layanan: {
           select: {
@@ -47,10 +49,13 @@ const detailLaundry = async (req, res) => {
     const data = await laundry.findUnique({
       where: { id: getLaundryId },
       select: {
+        id: true,
         namaLaundry: true,
         fotoLaundry: true,
         nomorTelepon: true,
         alamat: true,
+        latitude: true,
+        longitude: true,
         status: true,
         layanan: {
           select: {
@@ -102,6 +107,8 @@ const searchLaundry = async (req, res) => {
         fotoLaundry: true,
         nomorTelepon: true,
         alamat: true,
+        latitude: true,
+        longitude: true,
         status: true,
         layanan: {
           select: {
