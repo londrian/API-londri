@@ -94,7 +94,7 @@ const login = async (req, res) => {
 
     if (!cekLogin) {
       return res.status(403).json({
-        errur: true,
+        error: true,
         message: "Email tidak terdaftar",
       });
     }
