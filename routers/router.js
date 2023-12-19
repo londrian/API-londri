@@ -12,6 +12,7 @@ const profileUserRouter = require("./user/profile.route");
 
 const homeLaundry = require("./user/laundri.route");
 const orderLaundry = require("./user/order.route");
+const layananLaundry = require("./user/layanan.route");
 
 // Default router
 router.get("/", (req, res) => {
@@ -38,5 +39,7 @@ router.use("/laundry", homeLaundry);
 router.use("/laundry/order", orderLaundry);
 router.use("/laundry/riwayat", orderLaundry);
 router.use("/laundry/status", orderLaundry);
+
+router.use("/layanan/laundry", layananLaundry);
 
 module.exports = router;
