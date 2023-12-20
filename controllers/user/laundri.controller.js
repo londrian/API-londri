@@ -103,6 +103,7 @@ const searchLaundry = async (req, res) => {
         id: "asc",
       },
       select: {
+        id: true,
         namaLaundry: true,
         fotoLaundry: true,
         nomorTelepon: true,
