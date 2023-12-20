@@ -20,9 +20,15 @@ const calculateDistance = (lat1, lon1, lat2, lon2) => {
 
 const allLaundryWithNearest = async (req, res) => {
   try {
-    const userLatitude = parseFloat(req.body.latitude);
-    const userLongitude = parseFloat(req.body.longitude);
+    const latitudeString = req.query.latitude.replace(",", ".");
+    const longitudeString = req.query.longitude.replace(",", ".");
+
+    const userLatitude = parseFloat(latitudeString);
+    const userLongitude = parseFloat(longitudeString);
     const maxDistance = 15; // max distance is 15km
+
+    console.log("userLatitudeAA:", userLatitude);
+    console.log("userLongitudeAA:", userLongitude);
 
     if (isNaN(userLatitude) || isNaN(userLongitude)) {
       return res.status(400).json({
@@ -56,23 +62,52 @@ const allLaundryWithNearest = async (req, res) => {
       },
     });
 
-    const filteredData = data.filter((laundry) => {
-      const laundryLatitude = parseFloat(laundry.latitude);
-      const laundryLongitude = parseFloat(laundry.longitude);
+    const filteredData = data
+      .filter((laundry) => {
+        const latitudeString = laundry.latitude.replace(",", ".");
+        const longitudeString = laundry.longitude.replace(",", ".");
 
-      if (isNaN(laundryLatitude) || isNaN(laundryLongitude)) {
-        return false;
-      }
+        const laundryLatitude = parseFloat(latitudeString);
+        const laundryLongitude = parseFloat(longitudeString);
 
-      const distance = calculateDistance(
-        userLatitude,
-        userLongitude,
-        laundryLatitude,
-        laundryLongitude
-      );
+        if (isNaN(laundryLatitude) || isNaN(laundryLongitude)) {
+          return false;
+        }
 
-      return distance <= maxDistance;
-    });
+        const distance = calculateDistance(
+          userLatitude,
+          userLongitude,
+          laundryLatitude,
+          laundryLongitude
+        );
+
+        return distance <= maxDistance;
+      })
+      .map((laundry) => {
+        const latitudeString = laundry.latitude.replace(",", ".");
+        const longitudeString = laundry.longitude.replace(",", ".");
+
+        const laundryLatitude = parseFloat(latitudeString);
+        const laundryLongitude = parseFloat(longitudeString);
+
+        const distance = calculateDistance(
+          userLatitude,
+          userLongitude,
+          laundryLatitude,
+          laundryLongitude
+        );
+
+        console.log("userLatitude:", userLatitude);
+        console.log("userLongitude:", userLongitude);
+        console.log("laundryLatitude:", laundryLatitude);
+        console.log("laundryLongitude:", laundryLongitude);
+        console.log("Intermediate distance:", distance);
+
+        return {
+          ...laundry,
+          distance: distance.toFixed(2),
+        };
+      });
 
     return res.status(200).json({
       error: false,
