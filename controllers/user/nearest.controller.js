@@ -25,10 +25,7 @@ const allLaundryWithNearest = async (req, res) => {
 
     const userLatitude = parseFloat(latitudeString);
     const userLongitude = parseFloat(longitudeString);
-    const maxDistance = 15; // max distance is 15km
-
-    console.log("userLatitudeAA:", userLatitude);
-    console.log("userLongitudeAA:", userLongitude);
+    const maxDistance = 10; // max distance is 15km
 
     if (isNaN(userLatitude) || isNaN(userLongitude)) {
       return res.status(400).json({
@@ -96,12 +93,6 @@ const allLaundryWithNearest = async (req, res) => {
           laundryLatitude,
           laundryLongitude
         );
-
-        console.log("userLatitude:", userLatitude);
-        console.log("userLongitude:", userLongitude);
-        console.log("laundryLatitude:", laundryLatitude);
-        console.log("laundryLongitude:", laundryLongitude);
-        console.log("Intermediate distance:", distance);
 
         return {
           ...laundry,
