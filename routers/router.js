@@ -10,6 +10,7 @@ const orderAdminRouter = require("./admin/order.route.js");
 const authUserRouter = require("./user/auth.route");
 const profileUserRouter = require("./user/profile.route");
 
+const nearestLaundry = require("./user/nearest.route");
 const homeLaundry = require("./user/laundri.route");
 const orderLaundry = require("./user/order.route");
 const layananLaundry = require("./user/layanan.route");
@@ -35,6 +36,7 @@ router.use("/auth/user", authUserRouter);
 router.use("/user/profile", profileUserRouter);
 
 // Home
+router.use("/nearest/laundry", nearestLaundry);
 router.use("/laundry", homeLaundry);
 router.use("/laundry/order", orderLaundry);
 router.use("/laundry/riwayat", orderLaundry);

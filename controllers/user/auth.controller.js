@@ -20,7 +20,7 @@ const register = async (req, res) => {
 
     if (cekEmail) {
       return res.status(403).json({
-        errur: true,
+        error: true,
         message: "Email sudah terdaftar",
       });
     }
